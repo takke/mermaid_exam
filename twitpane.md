@@ -3,7 +3,7 @@
 - ViewModel, UseCase, Repository はこんなに綺麗に Clean Architecture で分離されていない
 
 
-## TwitPane, ついぺんリサーチR, ZonePane, たいぺん, BluePane (2025年後半〜)
+## 2025年後半: TwitPane, ついぺんリサーチR, ZonePane, たいぺん, BluePane
 - CMP対応？
  
 ```mermaid
@@ -30,17 +30,15 @@ flowchart TD
   UI["🧑‍💻 UI (Activity / Fragment / Compose(Bluesky, タイッツー))"]
   UIC["🧑‍💻 UI (Compose Multiplatform)"]
 
-  %% ViewModel Layer
-  VMA["🧠 ViewModel(Android専用)"]
-  VMC["🧠 ViewModel(CMP対応)"]
-
-  %% UseCase Layer
-  UCA["🧭 UseCase(Android専用)"]
-  UCC["🧭 UseCase(CMP対応)"]
-
-  %% Repository Layer
-  RPA["📦 Repository(Android専用)"]
-  RPC["📦 Repository(CMP対応)"]
+  %% Logic Layer subgraph
+  subgraph LG["🧠 Logic Layer"]
+    VMA["🧠 ViewModel(Android専用)"]
+    VMC["🧠 ViewModel(CMP対応)"]
+    UCA["🧭 UseCase(Android専用)"]
+    UCC["🧭 UseCase(CMP対応)"]
+    RPA["📦 Repository(Android専用)"]
+    RPC["📦 Repository(CMP対応)"]
+  end
 
   %% DataSource subgraph
   subgraph DS["🗄️ DataStore"]
@@ -99,39 +97,49 @@ flowchart TD
 ```
 
 
-## TwitPane, ついぺんリサーチR, ZonePane, たいぺん, BluePane (2025年前半〜)
+## 2025年前半: TwitPane, ついぺんリサーチR, ZonePane, たいぺん, BluePane
 - BluePane(Bluesky専用)
 - クロスポスト対応
  
 ```mermaid
 flowchart TD
-  %% App Layer
-  TP["📱 TwitPane"]
-  TPR["📱 ついぺんリサーチR"]
-  ZP["📱 ZonePane"]
-  TAP["📱 たいぺん"]
-  BP["📱 **BluePane**"]
+  %% Android Apps subgraph
+  subgraph AAP["🤖 Android Apps"]
+    TP["📱 TwitPane"]
+    TPR["📱 ついぺんリサーチR"]
+    ZP["📱 ZonePane"]
+    TAP["📱 たいぺん"]
+    BP["📱 **BluePane**"]
+  end
 
-  %% UI, Logic Layer
+  %% UI Layer
   UI["🧑‍💻 UI (Activity / Fragment / Compose(Bluesky, タイッツー))"]
-  VM["🧠 ViewModel(Compose対応)"]
-  UC["🧭 UseCase"]
-  RP["📦 Repository"]
 
-  %% DataSource Layer
-  TW["🐦 Twitter4J"]
-  MA["🐘 mastodon4j"]
-  MI["✨ misskey4j"]
-  KB["🌀 kbsky"]
-  TT["🧦 taittsuu4j"]
-  DB["💾 Local DB, Preferences"]
+  %% Logic Layer subgraph
+  subgraph LG["🧠 Logic Layer"]
+    VM["🧠 ViewModel(Compose対応)"]
+    UC["🧭 UseCase"]
+    RP["📦 Repository"]
+  end
 
-  %% Service Layer
-  S_TW["🌍 Twitter"]
-  S_MA["🌍 Mastodon"]
-  S_MI["🌍 Misskey"]
-  S_KB["🌍 Bluesky"]
-  S_TT["🌍 タイッツー"]
+  %% DataSource subgraph
+  subgraph DS["🗄️ DataStore"]
+    TW["🐦 Twitter4J"]
+    MA["🐘 mastodon4j"]
+    MI["✨ misskey4j"]
+    KB["🌀 kbsky"]
+    TT["🧦 taittsuu4j"]
+    DB["💾 Local DB, Preferences"]
+  end
+
+  %% Service subgraph
+  subgraph SV["🌍 Services"]
+    S_TW["Twitter"]
+    S_MA["Mastodon"]
+    S_MI["Misskey"]
+    S_KB["Bluesky"]
+    S_TT["タイッツー"]
+  end
 
   %% App connections
   TP --> UI
@@ -144,184 +152,287 @@ flowchart TD
   UI --> VM --> UC --> RP
 
   %% Repository to DataSources
-  RP --> TW --> S_TW
-  RP --> MA --> S_MA
-  RP --> MI --> S_MI
-  RP --> KB --> S_KB
-  RP --> TT --> S_TT
-  RP --> DB
+  RP --> DS
+
+  %% DataStore to Services
+  TW --> S_TW
+  MA --> S_MA
+  MI --> S_MI
+  KB --> S_KB
+  TT --> S_TT
 ```
 
-## TwitPane, ついぺんリサーチR, ZonePane, たいぺん (2024年後半〜)
+## 2024年後半: TwitPane, ついぺんリサーチR, ZonePane, たいぺん
 - タイッツー対応(たいぺん)
 
 ```mermaid
 flowchart TD
-  TP["📱 TwitPane"]
-  TPR["📱 ついぺんリサーチR"]
-  ZP["📱 ZonePane"]
-  TAP["📱 **たいぺん**"]
+  %% Android Apps subgraph
+  subgraph AAP["🤖 Android Apps"]
+    TP["📱 TwitPane"]
+    TPR["📱 ついぺんリサーチR"]
+    ZP["📱 ZonePane"]
+    TAP["📱 **たいぺん**"]
+  end
 
+  %% UI Layer
   UI["🧑‍💻 UI (Activity / Fragment / Compose(Bluesky, タイッツー))"]
-  VM["🧠 ViewModel(Compose対応)"]
-  UC["🧭 UseCase"]
-  RP["📦 Repository"]
 
-  TW["🐦 Twitter4J"]
-  MA["🐘 mastodon4j"]
-  MI["✨ misskey4j"]
-  KB["🌀 kbsky"]
-  TT["🧦 **taittsuu4j**"]
-  DB["💾 Local DB, Preferences"]
+  %% Logic Layer subgraph
+  subgraph LG["🧠 Logic Layer"]
+    VM["🧠 ViewModel(Compose対応)"]
+    UC["🧭 UseCase"]
+    RP["📦 Repository"]
+  end
 
-  S_TW["🌍 Twitter"]
-  S_MA["🌍 Mastodon"]
-  S_MI["🌍 Misskey"]
-  S_KB["🌍 Bluesky"]
-  S_TT["🌍 タイッツー"]
+  %% DataSource subgraph
+  subgraph DS["🗄️ DataStore"]
+    TW["🐦 Twitter4J"]
+    MA["🐘 mastodon4j"]
+    MI["✨ misskey4j"]
+    KB["🌀 kbsky"]
+    TT["🧦 **taittsuu4j**"]
+    DB["💾 Local DB, Preferences"]
+  end
 
+  %% Service subgraph
+  subgraph SV["🌍 Services"]
+    S_TW["Twitter"]
+    S_MA["Mastodon"]
+    S_MI["Misskey"]
+    S_KB["Bluesky"]
+    S_TT["タイッツー"]
+  end
+
+  %% App connections
   TP --> UI
   TPR --> UI
   ZP --> UI
   TAP --> UI
 
+  %% UI to Logic
   UI --> VM --> UC --> RP
 
-  RP --> TW --> S_TW
-  RP --> MA --> S_MA
-  RP --> MI --> S_MI
-  RP --> KB --> S_KB
-  RP --> TT --> S_TT
-  RP --> DB
+  %% Repository to DataSources
+  RP --> DS
+
+  %% DataStore to Services
+  TW --> S_TW
+  MA --> S_MA
+  MI --> S_MI
+  KB --> S_KB
+  TT --> S_TT
 ```
 
-## TwitPane, ついぺんリサーチR, ZonePane (2024年前半〜)
+## 2024年前半: TwitPane, ついぺんリサーチR, ZonePane
 - Bluesky対応
 - Compose で実装
 
 ```mermaid
 flowchart TD
-  TP["📱 TwitPane"]
-  TPR["📱 ついぺんリサーチR"]
-  ZP["📱 ZonePane"]
+  %% Android Apps subgraph
+  subgraph AAP["🤖 Android Apps"]
+    TP["📱 TwitPane"]
+    TPR["📱 ついぺんリサーチR"]
+    ZP["📱 ZonePane"]
+  end
 
+  %% UI Layer
   UI["🧑‍💻 UI (Activity / Fragment / Compose(Bluesky))"]
-  VM["🧠 ViewModel(Compose対応)"]
-  UC["🧭 UseCase"]
-  RP["📦 Repository"]
 
-  TW["🐦 Twitter4J"]
-  MA["🐘 mastodon4j"]
-  MI["✨ misskey4j"]
-  KB["🌀 **kbsky**"]
-  DB["💾 Local DB, Preferences"]
+  %% Logic Layer subgraph
+  subgraph LG["🧠 Logic Layer"]
+    VM["🧠 ViewModel(Compose対応)"]
+    UC["🧭 UseCase"]
+    RP["📦 Repository"]
+  end
 
-  S_TW["🌍 Twitter"]
-  S_MA["🌍 Mastodon"]
-  S_MI["🌍 Misskey"]
-  S_KB["🌍 Bluesky"]
+  %% DataSource subgraph
+  subgraph DS["🗄️ DataStore"]
+    TW["🐦 Twitter4J"]
+    MA["🐘 mastodon4j"]
+    MI["✨ misskey4j"]
+    KB["🌀 **kbsky**"]
+    DB["💾 Local DB, Preferences"]
+  end
 
+  %% Service subgraph
+  subgraph SV["🌍 Services"]
+    S_TW["Twitter"]
+    S_MA["Mastodon"]
+    S_MI["Misskey"]
+    S_KB["Bluesky"]
+  end
+
+  %% App connections
   TP --> UI
   TPR --> UI
   ZP --> UI
 
+  %% UI to Logic
   UI --> VM --> UC --> RP
 
-  RP --> TW --> S_TW
-  RP --> MA --> S_MA
-  RP --> MI --> S_MI
-  RP --> KB --> S_KB
-  RP --> DB
+  %% Repository to DataSources
+  RP --> DS
+
+  %% DataStore to Services
+  TW --> S_TW
+  MA --> S_MA
+  MI --> S_MI
+  KB --> S_KB
 ```
 
 
 
-## TwitPane, ついぺんリサーチ, ZonePane (2023年後半〜)
+## 2023年後半: TwitPane, ついぺんリサーチ, ZonePane
 - Misskey対応
 
 ```mermaid
 flowchart TD
-  TP["📱 TwitPane"]
-  TPR["📱 ついぺんリサーチ"]
-  ZP["📱 ZonePane"]
+  %% Android Apps subgraph
+  subgraph AAP["🤖 Android Apps"]
+    TP["📱 TwitPane"]
+    TPR["📱 ついぺんリサーチ"]
+    ZP["📱 ZonePane"]
+  end
 
+  %% UI Layer
   UI["🧑‍💻 UI (Activity / Fragment / Compose(一部))"]
-  VM["🧠 ViewModel(薄い)"]
-  UC["🧭 UseCase"]
-  RP["📦 Repository"]
 
-  TW["🐦 Twitter4J"]
-  MA["🐘 mastodon4j"]
-  MI["✨ **misskey4j**"]
-  DB["💾 Local DB, Preferences"]
+  %% Logic Layer subgraph
+  subgraph LG["🧠 Logic Layer"]
+    VM["🧠 ViewModel(薄い)"]
+    UC["🧭 UseCase"]
+    RP["📦 Repository"]
+  end
 
-  S_TW["🌍 Twitter"]
-  S_MA["🌍 Mastodon"]
-  S_MI["🌍 Misskey"]
+  %% DataSource subgraph
+  subgraph DS["🗄️ DataStore"]
+    TW["🐦 Twitter4J"]
+    MA["🐘 mastodon4j"]
+    MI["✨ **misskey4j**"]
+    DB["💾 Local DB, Preferences"]
+  end
 
+  %% Service subgraph
+  subgraph SV["🌍 Services"]
+    S_TW["Twitter"]
+    S_MA["Mastodon"]
+    S_MI["Misskey"]
+  end
+
+  %% App connections
   TP --> UI
   TPR --> UI
   ZP --> UI
 
+  %% UI to Logic
   UI --> VM --> UC --> RP
 
-  RP --> TW --> S_TW
-  RP --> MA --> S_MA
-  RP --> MI --> S_MI
-  RP --> DB
+  %% Repository to DataSources
+  RP --> DS
+
+  %% DataStore to Services
+  TW --> S_TW
+  MA --> S_MA
+  MI --> S_MI
 ```
 
 
 
-## TwitPane, ついぺんリサーチ, ZonePane (2023年前半〜)
+## 2023年前半: TwitPane, ついぺんリサーチ, ZonePane
 - ついぺんリサーチ
 - ZonePane - Mastodon 対応
 
 ```mermaid
 flowchart TD
-  TP["📱 TwitPane"]
-  TPR["📱 ついぺんリサーチ"]
-  ZP["📱 **ZonePane**"]
+  %% Android Apps subgraph
+  subgraph AAP["🤖 Android Apps"]
+    TP["📱 TwitPane"]
+    TPR["📱 ついぺんリサーチ"]
+    ZP["📱 **ZonePane**"]
+  end
 
+  %% UI Layer
   UI["🧑‍💻 UI (Activity / Fragment / Compose(一部))"]
-  VM["🧠 ViewModel(薄い)"]
-  UC["🧭 UseCase"]
-  RP["📦 Repository"]
 
-  TW["🐦 Twitter4J"]
-  MA["🐘 **mastodon4j**"]
-  DB["💾 Local DB, Preferences"]
+  %% Logic Layer subgraph
+  subgraph LG["🧠 Logic Layer"]
+    VM["🧠 ViewModel(薄い)"]
+    UC["🧭 UseCase"]
+    RP["📦 Repository"]
+  end
 
-  S_TW["🌍 Twitter"]
-  S_MA["🌍 Mastodon"]
+  %% DataSource subgraph
+  subgraph DS["🗄️ DataStore"]
+    TW["🐦 Twitter4J"]
+    MA["🐘 **mastodon4j**"]
+    DB["💾 Local DB, Preferences"]
+  end
 
+  %% Service subgraph
+  subgraph SV["🌍 Services"]
+    S_TW["Twitter"]
+    S_MA["Mastodon"]
+  end
+
+  %% App connections
   TP --> UI
   TPR --> UI
   ZP --> UI
 
+  %% UI to Logic
   UI --> VM --> UC --> RP
 
-  RP --> TW --> S_TW
-  RP --> MA --> S_MA
-  RP --> DB
+  %% Repository to DataSources
+  RP --> DS
+
+  %% DataStore to Services
+  TW --> S_TW
+  MA --> S_MA
 ```
 
 
-## TwitPane (〜2022年)
+## 2022年: TwitPane
 
 ```mermaid
 flowchart TD
-  APP["📱 TwitPane (App Layer)"]
-  UI["🧑‍💻 UI (Activity / Fragment)"]
-  VM["🧠 ViewModel(薄い)"]
-  UC["🧭 UseCase"]
-  RP["📦 Repository"]
-  TW["🐦 Twitter4J"]
-  DB["💾 Local DB, Preferences"]
-  S_TW["🌍 Twitter"]
+  %% Android Apps subgraph
+  subgraph AAP["🤖 Android Apps"]
+    APP["📱 TwitPane"]
+  end
 
-  APP --> UI --> VM --> UC --> RP
-  RP --> TW --> S_TW
-  RP --> DB
+  %% UI Layer
+  UI["🧑‍💻 UI (Activity / Fragment)"]
+
+  %% Logic Layer subgraph
+  subgraph LG["🧠 Logic Layer"]
+    VM["🧠 ViewModel(薄い)"]
+    UC["🧭 UseCase"]
+    RP["📦 Repository"]
+  end
+
+  %% DataSource subgraph
+  subgraph DS["🗄️ DataStore"]
+    TW["🐦 Twitter4J"]
+    DB["💾 Local DB, Preferences"]
+  end
+
+  %% Service subgraph
+  subgraph SV["🌍 Services"]
+    S_TW["Twitter"]
+  end
+
+  %% App connections
+  APP --> UI
+
+  %% UI to Logic
+  UI --> VM --> UC --> RP
+
+  %% Repository to DataSources
+  RP --> DS
+
+  %% DataStore to Services
+  TW --> S_TW
 ```
 
