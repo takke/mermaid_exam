@@ -8,35 +8,58 @@
  
 ```mermaid
 flowchart TD
-  %% App Layer
-  TP["📱 TwitPane"]
-  TPR["📱 ついぺんリサーチR"]
-  ZP["📱 ZonePane"]
-  TAP["📱 たいぺん"]
-  BP["📱 BluePane"]
-  ZPZ["📱 ZonePane Zero"]
+  %% Android Apps subgraph
+  subgraph AAP["🤖 Android Apps"]
+    TP["📱 TwitPane"]
+    TPR["📱 ついぺん
+リサーチR"]
+    ZP["📱 ZonePane"]
+    TAP["📱 たいぺん"]
+    BP["📱 BluePane"]
+    ZPZ_A["📱 ZonePane Zero
+(Android)"]
+  end
 
-  %% UI, Logic Layer
+  %% CMP Apps subgraph
+  subgraph CAP["🧪 CMP Apps"]
+    ZPZ_I["📱 ZonePane Zero
+(iOS)"]
+  end
+
+  %% UI Layer
   UI["🧑‍💻 UI (Activity / Fragment / Compose(Bluesky, タイッツー))"]
   UIC["🧑‍💻 UI (Compose Multiplatform)"]
-  VM["🧠 ViewModel(Compose対応)"]
-  UC["🧭 UseCase"]
-  RP["📦 Repository"]
 
-  %% DataSource Layer
-  TW["🐦 Twitter4J"]
-  MA["🐘 mastodon4j"]
-  MI["✨ misskey4j"]
-  KB["🌀 kbsky"]
-  TT["🧦 taittsuu4j"]
-  DB["💾 Local DB, Preferences"]
+  %% ViewModel Layer
+  VMA["🧠 ViewModel(Android専用)"]
+  VMC["🧠 ViewModel(CMP対応)"]
 
-  %% Service Layer
-  S_TW["🌍 Twitter"]
-  S_MA["🌍 Mastodon"]
-  S_MI["🌍 Misskey"]
-  S_KB["🌍 Bluesky"]
-  S_TT["🌍 タイッツー"]
+  %% UseCase Layer
+  UCA["🧭 UseCase(Android専用)"]
+  UCC["🧭 UseCase(CMP対応)"]
+
+  %% Repository Layer
+  RPA["📦 Repository(Android専用)"]
+  RPC["📦 Repository(CMP対応)"]
+
+  %% DataSource subgraph
+  subgraph DS["🗄️ DataStore"]
+    TW["🐦 Twitter4J"]
+    MA["🐘 mastodon4j"]
+    MI["✨ misskey4j"]
+    KB["🌀 kbsky"]
+    TT["🧦 taittsuu4j"]
+    DB["💾 Local DB, Preferences"]
+  end
+
+  %% Service subgraph
+  subgraph SV["🌍 Services"]
+    S_TW["Twitter"]
+    S_MA["Mastodon"]
+    S_MI["Misskey"]
+    S_KB["Bluesky"]
+    S_TT["タイッツー"]
+  end
 
   %% App connections
   TP --> UI
@@ -44,19 +67,35 @@ flowchart TD
   ZP --> UI
   TAP --> UI
   BP --> UI
-  ZPZ --> UIC
+  ZPZ_A --> UIC
+  ZPZ_I --> UIC
 
-  %% UI to Logic
-  UI --> VM --> UC --> RP
-  UIC --> VM
+  %% UI to ViewModel
+  UI --> VMA
+  UI --> VMC
+  UIC --> VMC
 
-  %% Repository to DataSources
-  RP --> TW --> S_TW
-  RP --> MA --> S_MA
-  RP --> MI --> S_MI
-  RP --> KB --> S_KB
-  RP --> TT --> S_TT
-  RP --> DB
+  %% ViewModel to UseCase
+  VMA --> UCA
+  VMA --> UCC
+  VMC --> UCC
+
+  %% UseCase to Repository
+  UCA --> RPA
+  UCA --> RPC
+  UCC --> RPC
+
+  %% Repository to DataStore (1 line per repo)
+  RPA --> DS
+  RPC --> DS
+
+  %% DataStore to Services
+  TW --> S_TW
+  MA --> S_MA
+  MI --> S_MI
+  KB --> S_KB
+  TT --> S_TT
+
 ```
 
 
